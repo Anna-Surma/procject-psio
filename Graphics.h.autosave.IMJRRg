@@ -1,0 +1,25 @@
+#ifndef PLATFORM_H
+#define PLATFORM_H
+
+#include "game.h"
+
+class Graphics
+{
+public:
+    Graphics();
+    ~Graphics();
+    std::vector<sf::Sprite> create_platforms(sf::Texture &texture, sf::Window &window);
+    void create_ground(sf::Texture &ground_texture, sf::Window &window);
+    void Graphics::create_background(sf::Texture &ground_texture, sf::Window &window)
+    
+    void draw_platform (sf::RenderWindow &window);
+    void draw_ground (sf::RenderWindow &window);
+
+private:
+
+    std::vector<sf::Sprite> platforms;
+    sf::Sprite ground;
+    sf::Sprite background;
+
+};
+#endif // PLATFORM_H

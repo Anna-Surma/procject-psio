@@ -1,0 +1,65 @@
+#ifndef PLAYER_H
+#define PLAYER_H
+
+#include "game.h"
+#include "move.h"
+#include "graphics.h"
+
+class Player
+{
+public:
+    Player();
+    virtual ~Player();
+
+    enum Status {
+    IDZ,
+    STOJ,
+    SKACZ,
+    STRZELAJ
+    };
+
+    Status getStatus();
+
+    void add_animation_frame(sf::IntRect frame);
+    sf::Sprite body;
+    sf::Texture texture;
+
+   // std::vector<sf::IntRect> frames;
+    size_t frame_index_=5;
+    float change_time=0;
+  //  float velocity_x_=200;
+   // float velocity_y_=300;
+    //int ground=700;
+
+
+    float jump_force=400;
+    float gravity_acceleration=9.8;
+
+
+    float mass_=0;
+    float acceleration_=0;
+    float acceleriationValue_=0;
+
+      bool whilejump_=false;
+      float s_x_;
+      float s_y_;
+
+    Graphics graphic;
+
+    void animeted_movement(sf::Time time, sf::Window &window);
+    void step2(sf::Time elapsed);
+
+private:   
+    Status status;
+    virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const; 
+    
+    std::vector<sf::IntRect> frames;
+    size_t current_frame_index;
+    float acceleration=0.02;
+    float velocity_x_=0.05;
+    float velocity_y_=0.05;
+    float gravitation_velocity;
+    bool is_jumping=false;
+    int ground=500;
+};
+#endif // PLAYER_H
