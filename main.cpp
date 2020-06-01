@@ -5,7 +5,6 @@
 #include "enemy.h"
 #include <random>
 
-
 int main()
 {
     sf::RenderWindow window(sf::VideoMode(700, 800), "My window");
