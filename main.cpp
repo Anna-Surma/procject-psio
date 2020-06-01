@@ -27,9 +27,6 @@ int main()
     ground.loadFromFile("grass.png");
     platform.create_others(background, ground, window);
 
-    sf::Texture player_texture;
-    player_texture.loadFromFile("character.png");
-
     sf::Texture enemy_texture;
 
     if(!enemy_texture.loadFromFile("grass.png"))
