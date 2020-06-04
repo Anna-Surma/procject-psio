@@ -1,11 +1,7 @@
 #include "bullet.h"
 
-Bullet::Bullet()
+Bullet::Bullet(sf::Texture &texture)
 {
-    if(!texture.loadFromFile("grass.png"))
-    {
-        std::cout<<"Textures not found!"<<std::endl;
-    }
     bullet_body.setTexture(texture);
     bullet_body.setTextureRect(sf::IntRect(0, 0, 10, 10));
     bullet_body.setPosition(450,690);
@@ -29,11 +25,19 @@ Bullet::Bullet()
 //            }
 //}
 
-void Bullet::shoot()
+void Bullet::shoot(bool direction)
 {
+    if (direction)
+    {
     bullet_body.move(speed, 0);
+    std::cout<<"RIGHT"<<std::endl;
+    }
+    else
+    {
+     bullet_body.move(-speed, 0);
+     std::cout<<"LEFT"<<std::endl;
+    }
 }
-
 
 void Bullet::draw(sf::RenderWindow &window)
 {
@@ -43,4 +47,9 @@ void Bullet::draw(sf::RenderWindow &window)
 void Bullet::set_Pos(sf::Vector2f position)
 {
     bullet_body.setPosition(position);
+}
+
+sf::Vector2f Bullet::get_Pos()
+{
+   return bullet_body.getPosition();
 }

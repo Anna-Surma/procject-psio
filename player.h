@@ -6,7 +6,7 @@
 class Player
 {
 public:
-    Player();
+    Player(sf::Texture &texture);
     virtual ~Player();
 
     void add_animation_frame(sf::IntRect frame);

@@ -9,47 +9,54 @@ int main()
 {
     sf::RenderWindow window(sf::VideoMode(700, 800), "My window");
     window.setVerticalSyncEnabled(true);
-    //Game game;
-    Player character;
+
+    sf::Texture character_texture;
+    character_texture.loadFromFile("Run(32x32).png");
+
+    Player character(character_texture);
     sf::Clock clock;
 
     sf::Texture platform_texture;
-    platform_texture.loadFromFile("platform.png");
+    platform_texture.loadFromFile("block2.png");
 
     Graphics platform;
     std::vector<sf::Sprite> platforms = platform.create_platforms(platform_texture, window);
 
     sf::Texture background;
-    background.loadFromFile("tlo.png");
+    background.loadFromFile("SunsetSky2.png");
+
+    sf::Texture wall;
+    wall.loadFromFile("block1.png");
 
     sf::Texture ground;
     ground.loadFromFile("grass.png");
-    platform.create_others(background, ground, window);
+    platform.create_others(background, ground, wall, window);
 
     sf::Texture enemy_texture;
 
+    //if(!enemy_texture.loadFromFile("Run2(32x32).png"))
     if(!enemy_texture.loadFromFile("grass.png"))
     {
         std::cout<<"Textures not found!"<<std::endl;
     }
 
     Enemy enemy;
-    std::vector<sf::Sprite> enemys = enemy.create_enemy(platforms, enemy_texture);
+    std::vector<sf::Sprite> enemys = enemy.create_enemy(platform.platforms, enemy_texture);
 
+    std::vector<Bullet> bullets;
+    bool isShooting = false;
 
-    std::vector<Bullet> bulletVec;
-    bool isFiring = false;
-
-
-    sf::View view;
-    view.reset(sf::FloatRect(0,0, window.getSize().x, window.getSize().y));
-    view.setViewport(sf::FloatRect(0,0, 1, 1));
+    sf::View view(sf::FloatRect(0,0, 700, 800));
 
 
     while (window.isOpen())
         {
         sf::Time time = clock.restart();
             sf::Event event;
+
+            //float s=100*time.asSeconds();
+            //view.move(100.f, 100.f);
+            //view.move(0, -s);
 
             while (window.pollEvent(event))
             {
@@ -58,31 +65,40 @@ int main()
                 if(event.type == sf::Event::KeyPressed)
                 {}
                             if (sf::Keyboard::isKeyPressed(sf::Keyboard::B)) {
-                                isFiring = true;
+                                isShooting = true;
                             }
-                            if (sf::Keyboard::isKeyPressed(sf::Keyboard::B)) {
-                                isFiring = true;
-                            }
-                }
+             }
+
+            //platform.platform_move(time);
 
             window.clear();
             window.setView(view);
+
             platform.draw_others(window);
             platform.draw_platform(window);
             character.draw(window);
             enemy.draw_enemys(window);
 
-            if (isFiring == true) {
-                        Bullet newBullet;
-                        newBullet.set_Pos(sf::Vector2f(character.body.getPosition().x, character.body.getPosition().y));
-                        bulletVec.push_back(newBullet);
-                        isFiring = false;
+            enemy.move_enemy(platform.platforms);
+
+            if (isShooting == true) {
+                        Bullet bullet(ground);
+                        bullet.set_Pos(sf::Vector2f(character.body.getPosition().x, character.body.getPosition().y));
+                        bullets.push_back(bullet);
+
+                        isShooting = false;
                     }
 
-                    for (int i = 0; i < bulletVec.size(); i++) {
-                        bulletVec[i].draw(window);
-                        bulletVec[i].shoot();
-                        enemy.check_coll(bulletVec[i]);
+                    for (int i = 0; i < bullets.size(); i++) {
+                        bullets[i].draw(window);
+                        bullets[i].shoot(character.is_right);
+                        enemy.check_coll(bullets[i]);
+
+                        if (bullets[i].get_Pos().x < 0 || bullets[i].get_Pos().x > window.getSize().x
+                        || bullets[i].get_Pos().y < 0 || bullets[i].get_Pos().y > window.getSize().y)
+                        {
+                          bullets.erase(bullets.begin() + i);
+                        }
                     }
 
             window.display();
@@ -91,8 +107,9 @@ int main()
             {
                  character.add_animation_frame(sf::IntRect(i, 0, 32, 32));
             }
-            character.check_coll(platforms);
+            character.check_coll(platform.platforms);
             character.animeted_movement(time, window);
+
      }
     return 0;
 }

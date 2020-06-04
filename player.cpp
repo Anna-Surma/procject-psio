@@ -2,13 +2,8 @@
 #include <math.h>
 
 
-Player::Player()
+Player::Player(sf::Texture &texture)
 {
-    if(!texture.loadFromFile("Run(32x32).png"))
-    {
-        std::cout<<"Textures not found!"<<std::endl;
-    }
-
     body.setTexture(texture);
     body.setPosition(350,690);
     body.setScale(1.5,1.5);
