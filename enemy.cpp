@@ -1,5 +1,6 @@
 #include "enemy.h"
 #include "cstdlib"
+#include "time.h"
 
 Enemy::Enemy()
 {}
@@ -14,25 +15,28 @@ void Enemy::check_coll(Bullet bullet)
     {
         enem.setPosition(sf::Vector2f(4200, 4200));
     }
-    }
+   }
 }
 
 std::vector<sf::Sprite> Enemy::create_enemy(std::vector<sf::Sprite> &walls, sf::Texture &enemyTexture)
 {
     srand(time(NULL));
 
-    sf::Vector2u platform_pos[10];
+    sf::Vector2u enemy_pos[10];
 
-    for(int i=0; i<5; i++)
+    for(int i=0; i<10; i++)
     {
-        i = rand()%10;
+        platform_number = rand()%22;
         sf::Sprite enemy(enemyTexture);
-        enemyTexture.setRepeated(true);
+        //enemyTexture.setRepeated(true);
 
-        platform_pos[i].x = walls[i].getGlobalBounds().left;
-        platform_pos[i].y = walls[i].getGlobalBounds().top;
-        enemy.setTextureRect(sf::IntRect(0, 0, 20, 20));
-        enemy.setPosition(platform_pos[i].x+5, platform_pos[i].y-enemy.getGlobalBounds().height+1);
+        enemy.setTextureRect(sf::IntRect(0, 0, 150, 200));
+        enemy.setScale(0.3,0.3);
+        enemy_pos[i].x = walls[platform_number].getGlobalBounds().left;
+        enemy_pos[i].y = walls[platform_number].getGlobalBounds().top;
+
+        enemy.setPosition(enemy_pos[i].x+10, enemy_pos[i].y-enemy.getGlobalBounds().height+1);
+
         enemys.push_back(enemy);
     }  
     return enemys;
@@ -46,7 +50,13 @@ void Enemy::draw_enemys(sf::RenderWindow &window)
     }
 }
 
-void Enemy::move_enemy(std::vector<sf::Sprite> &walls)
+void Enemy::add_animation_frame(sf::IntRect frame)
+{
+    frames.emplace_back(frame);
+}
+
+
+void Enemy::move_enemy(std::vector<sf::Sprite> &walls, sf::Time time)
 {
     for(auto &wall : walls)
     {
@@ -57,30 +67,57 @@ void Enemy::move_enemy(std::vector<sf::Sprite> &walls)
 
             if(wall_bounds.intersects(enem_bounds))
             {
-                std::cout<<"UDERZENIE"<<std::endl;
-                std::cout<<go_right<<std::endl;
 
-                if(enem_bounds.left==wall_bounds.left)
+                // PRAWA STRONA
+                if((enem_bounds.left+enem_bounds.width) >= (wall_bounds.left+wall_bounds.width))
                 {
-                    std::cout<<"TRUE"<<std::endl;
+                    go_right=false;
+                }
+                // LEWA STRONA
+                if(enem_bounds.left <= wall_bounds.left)
+                {
                     go_right=true;
                 }
 
-                if(!(enem_bounds.left<wall_bounds.left)&&!(enem_bounds.left+enem_bounds.width>wall_bounds.left+wall_bounds.width)&&go_right)
+                if(go_right)
                 {
-                    std::cout<<"POWROT PRAWO"<<std::endl;
-                    enem.move(1,0.0f);
-                }
-                if(enem_bounds.left+enem_bounds.width==wall_bounds.left+wall_bounds.width)
-                {
-                    std::cout<<"FALSE"<<std::endl;
-                    go_right=false;
-                }
+                    enem.move(1, 0.0f);
 
-                if(!(enem_bounds.left<wall_bounds.left)&&!(enem_bounds.left+enem_bounds.width>wall_bounds.left+wall_bounds.width)&&!go_right)
+                    change_time+=time.asSeconds();
+                        enem.setTextureRect(frames[frame_index_]);
+                        if(change_time>0.7)
+                        {
+                            if(frame_index_<5)
+                            {
+                                frame_index_++;
+                            }
+                            else
+                            {
+                                frame_index_=0;
+                            }
+                            change_time=0;
+                        }
+
+                    }
+
+                else
                 {
-                    std::cout<<"POWROT LEWO"<<std::endl;
                     enem.move(-1, 0.0f);
+
+                    change_time+=time.asSeconds();
+                        enem.setTextureRect(frames[frame_index_+6]);
+                        if(change_time>0.8)
+                        {
+                            if(frame_index_+6<10)
+                            {
+                                frame_index_++;
+                            }
+                            else
+                            {
+                                frame_index_=0;
+                            }
+                            change_time=0;
+                        }
                 }
             }
         }

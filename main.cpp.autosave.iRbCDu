@@ -64,15 +64,13 @@ int main()
     }
 
     sf::Texture bullet_texture;
-    bullet_texture.loadFromFile("bullet.png");
+    bullet_texture.loadFromFile("grass.png");
 
     std::vector<Bullet> bullets;
 
     bool isShooting = false;
 
     int start_point =2450;
-
-    bool is_right=true;
 
     float suma=0;
 
@@ -92,12 +90,6 @@ int main()
                 if (sf::Keyboard::isKeyPressed(sf::Keyboard::B)) {
                     isShooting = true;
                 }
-                if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right)) {
-                    is_right = true;
-                }
-                if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left)) {
-                    is_right = false;
-                }
                 }
             }
             sf::Time time = clock.restart();
@@ -109,35 +101,35 @@ int main()
             character.animeted_movement(time, window);
             enemy.move_enemy(platform.platforms, time);
 
-            if (isShooting == true)
+            if (isShooting == true) 
             {
                 Bullet bullet(bullet_texture);
                 bullet.set_Pos(sf::Vector2f(character.body.getPosition().x, character.body.getPosition().y));
                 bullets.push_back(bullet);
-
+                
                 isShooting = false;
             }
-
+            
                if (isShooting == true)
                {
                    Bullet bullet(bullet_texture);
                    bullet.set_Pos(sf::Vector2f(character.body.getPosition().x, character.body.getPosition().y));
                    bullets.push_back(bullet);
-
+   
                    isShooting = false;
                }
-
-               for (int i = 0; i < bullets.size(); i++)
-               {
+   
+               for (int i = 0; i < bullets.size(); i++) {
                    bullets[i].shoot(character.is_right);
                    enemy.check_coll(bullets[i]);
-
+   
                    if (bullets[i].get_Pos().x < 0 || bullets[i].get_Pos().x > window.getSize().x)
                    {
                        bullets.erase(bullets.begin() + i);
                    }
                }
 
+               
 //            for (auto itr =  bullets.begin(); itr!=bullets.end(); )
 //            {
 //                itr->shoot(character.is_right);
@@ -152,32 +144,32 @@ int main()
 //                    itr++;
 //                }
 //           }
+               
+                            window.clear();
+                                platform.draw_others(window);
 
-               window.clear();
-               platform.draw_others(window);
+                                platform.draw_platform(window);
+                                character.draw(window);
+                                enemy.draw_enemys(window);
 
-               platform.draw_platform(window);
-               character.draw(window);
-               enemy.draw_enemys(window);
+                                for (int i = 0; i < bullets.size(); i++) {
+                                    bullets[i].draw(window);
+                                }
 
-               for (int i = 0; i < bullets.size(); i++) {
-                   bullets[i].draw(window);
-               }
+                                //            for (auto itr =  bullets.begin(); itr!=bullets.end();)
+                                //            {
+                                //                itr->draw(window);
+                                //            }
 
-               //            for (auto itr =  bullets.begin(); itr!=bullets.end();)
-               //            {
-               //                itr->draw(window);
-               //            }
+                                window.display();
 
-               window.display();
+                                suma+=time.asSeconds();
+                                float s=100*time.asSeconds();
 
-               suma+=time.asSeconds();
-               float s=50*time.asSeconds();
-
-               if(suma>=3)
-               {
-                   // view.move(0, -s);
-               }
+                                if(suma>=3)
+                                {
+                                    //  view.move(0, -s);
+                                }
         }
         return 0;
-}
+    }
